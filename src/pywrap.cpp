@@ -200,21 +200,25 @@ PYBIND11_MODULE(pysgtelib , m) {
             return convertMatrixToNumpy(Sh); 
         }, "A wrapper for the Surrogate get_matrix_Sh method that returns a NumPy array")
         .def("get_Zh", [](SGTELIB::Surrogate &self) {  
-            SGTELIB::Matrix Zh = self.get_matrix_Sh();    
+            SGTELIB::Matrix Zh = self.get_matrix_Zh();    
             return convertMatrixToNumpy(Zh); 
         }, "A wrapper for the Surrogate get_matrix_Zh method that returns a NumPy array")
         .def("get_Zv", [](SGTELIB::Surrogate &self) {  
-            SGTELIB::Matrix Zv = self.get_matrix_Sh();    
+            SGTELIB::Matrix Zv = self.get_matrix_Zv();    
             return convertMatrixToNumpy(Zv); 
         }, "A wrapper for the Surrogate get_matrix_Zv method that returns a NumPy array")
         .def("get_Sv", [](SGTELIB::Surrogate &self) {  
-            SGTELIB::Matrix Sv = self.get_matrix_Sh();    
+            SGTELIB::Matrix Sv = self.get_matrix_Sv();    
             return convertMatrixToNumpy(Sv); 
         }, "A wrapper for the Surrogate get_matrix_Sv method that returns a NumPy array")
         .def("optimize_parameters", &SGTELIB::Surrogate::optimize_parameters, 
         "A wrapper for the Surrogate optimize_parameters method that returns a bool")
         .def("get_param", &SGTELIB::Surrogate::get_param, 
-        "A wrapper for the Surrogate get_param method that returns Surrogate_Parameters");
+        "A wrapper for the Surrogate get_param method that returns Surrogate_Parameters")
+        .def("get_in_dim", &SGTELIB::Surrogate::get_in_dim, 
+        "A wrapper for the Surrogate get_in_dim method that returns Surrogate_Parameters")
+        .def("get_out_dim", &SGTELIB::Surrogate::get_out_dim, 
+        "A wrapper for the Surrogate get_out_dim method that returns Surrogate_Parameters");
 
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);  
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::Matrix&, SGTELIB::Matrix&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);

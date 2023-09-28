@@ -47,7 +47,13 @@ make
 
 This should create a `pysgtelib.cpython-39-x86_64-linux-gnu.so` file in your `build` directory. The file name will vary based on your python version and linux distribution.
 
-Now, in `pysgtelib` create a virtual environment
+**Optional**: Generate stub file `.pyi` to help you with intellisense and be able to understand how to use `pysgtelib`
+
+```bash
+stubgen -m pysgtelib -o .
+```
+
+Now, in `root` create a virtual environment
 
 ```bash
 python -m venv .env

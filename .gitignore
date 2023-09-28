@@ -46,3 +46,4 @@ build/*.txt
 # python
 .env
 .pyc
+__pycache__
