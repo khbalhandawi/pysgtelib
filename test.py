@@ -1,7 +1,7 @@
 import numpy as np  
 import os
 from build.pysgtelib import Matrix, TrainingSet, Surrogate_Factory
-from build.pysgtelib import Models, Metrics
+from build.pysgtelib import Models, Metrics, Surrogate_Ensemble
 
 data_dir = "data"
 
@@ -17,11 +17,12 @@ XX = np.loadtxt(os.path.join(data_dir,"XX.txt"), delimiter=",", dtype=str, ndmin
 
 TS = TrainingSet(X,Z)
 
-model = "TYPE KRIGING DISTANCE OPTIM RIDGE OPTIM METRIC OECV"
-S = Surrogate_Factory(TS,model)
+model = "TYPE ENSEMBLE"
+S:Surrogate_Ensemble = Surrogate_Factory(TS,model)
+S.model_list_display()
 S.build()
 ZZ = S.predict(XX)
- 
+
 E = S.get_metric(Metrics.OECV,0)
 p = S.get_param()
 print("Model default")
@@ -32,11 +33,13 @@ print("error:", E)
 # Zh = S.get_Zh()
 # Sh = S.get_Sh()
 
-S.optimize_parameters()
-p = S.get_param()
-print("Model optimized")
-print("ridge:", p.get_ridge())
-print("distance:", p.get_distance_type())
-print("error:", E)
+# test string dict
+model = {
+    "TYPE" : "PRS",
+    "DEGREE" : "2",
+    "RIDGE" : "0.001"
+}
 
-E = S.get_metric(Metrics.OECV,0)
+S = Surrogate_Factory(TS,model)
+S.build()
+ZZ = S.predict(XX)

@@ -219,8 +219,18 @@ PYBIND11_MODULE(pysgtelib , m) {
         "A wrapper for the Surrogate get_in_dim method that returns Surrogate_Parameters")
         .def("get_out_dim", &SGTELIB::Surrogate::get_out_dim, 
         "A wrapper for the Surrogate get_out_dim method that returns Surrogate_Parameters");
+        
+    // this is an abstract class, cannot bind constructors
+    py::class_<SGTELIB::Surrogate_Ensemble, SGTELIB::Surrogate>(m, "Surrogate_Ensemble")
+        .def("model_list_display", [](SGTELIB::Surrogate_Ensemble &self) {   
+            std::ostringstream oss; 
+            self.model_list_display(oss);
+            return oss.str();
+        }, "A wrapper for model_list_display"  );
 
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);  
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::Matrix&, SGTELIB::Matrix&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);
+    m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::map<std::string,std::string>&)) &Surrogate_Factory, py::return_value_policy::reference);
+
 
 }
