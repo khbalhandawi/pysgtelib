@@ -230,7 +230,7 @@ PYBIND11_MODULE(pysgtelib , m) {
 
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);  
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::Matrix&, SGTELIB::Matrix&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);
-    m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::map<std::string,std::string>&)) &Surrogate_Factory, py::return_value_policy::reference);
+    m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::map<std::string,SGTELIB::ParameterTypes>&)) &Surrogate_Factory, py::return_value_policy::reference);
 
 
 }

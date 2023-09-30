@@ -1,7 +1,8 @@
 import numpy as np  
 import os
 from build.pysgtelib import Matrix, TrainingSet, Surrogate_Factory
-from build.pysgtelib import Models, Metrics, Surrogate_Ensemble
+from build.pysgtelib import Models, Metrics, Surrogate_Ensemble, KernelType
+from build.pysgtelib import PRS, KS, OECV, KRIGING, NORM2
 
 data_dir = "data"
 
@@ -38,6 +39,19 @@ model = {
     "TYPE" : "PRS",
     "DEGREE" : "2",
     "RIDGE" : "0.001"
+}
+
+S = Surrogate_Factory(TS,model)
+S.build()
+ZZ = S.predict(XX)
+
+# test normal dict
+
+model = {
+    "TYPE" : PRS,
+    "degree" : 2,
+    "RIDGE" : 0.001,
+    "KERNEL" : KernelType.D1
 }
 
 S = Surrogate_Factory(TS,model)
