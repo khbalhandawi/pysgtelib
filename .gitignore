@@ -42,6 +42,7 @@ build/*.txt
 # GCC stuff
 *.a
 *_intermediate_link*
+*.pc
 
 # python
 .env

@@ -157,6 +157,7 @@ PYBIND11_MODULE(pysgtelib , m) {
     py::class_<SGTELIB::Surrogate_Parameters>(m, "Surrogate_Parameters")  
         .def(py::init<const model_t &>())  
         .def(py::init<const std::string &>())
+        .def("get_nb_parameter_optimization", &SGTELIB::Surrogate_Parameters::get_nb_parameter_optimization, "A function that returns the number of parameters to optimize")
         .def("get_type", &SGTELIB::Surrogate_Parameters::get_type)  
         .def("get_degree", &SGTELIB::Surrogate_Parameters::get_degree)  
         .def("get_kernel_type", &SGTELIB::Surrogate_Parameters::get_kernel_type)  
@@ -179,7 +180,7 @@ PYBIND11_MODULE(pysgtelib , m) {
 
     // this is an abstract class, cannot bind constructors
     py::class_<SGTELIB::Surrogate>(m, "Surrogate")
-        .def("build", &SGTELIB::Surrogate::build)
+        .def("build", &SGTELIB::Surrogate::build, py::arg("optimize") = false)
         .def("predict", [](SGTELIB::Surrogate &self, py::array_t<double> XX_arr) {    
             SGTELIB::Matrix XX = convertNumpyToMatrix(XX_arr, "XX");  
             SGTELIB::Matrix ZZ("ZZ", self.get_in_dim(), self.get_out_dim());    

@@ -2,7 +2,6 @@ import numpy as np
 import os
 from build.pysgtelib import Matrix, TrainingSet, Surrogate_Factory
 from build.pysgtelib import Models, Metrics, Surrogate_Ensemble, KernelType
-from build.pysgtelib import PRS, KS, OECV, KRIGING, NORM2
 
 data_dir = "data"
 
@@ -23,13 +22,7 @@ S:Surrogate_Ensemble = Surrogate_Factory(TS,model)
 S.model_list_display()
 S.build()
 ZZ = S.predict(XX)
-
 E = S.get_metric(Metrics.OECV,0)
-p = S.get_param()
-print("Model default")
-print("ridge:", p.get_ridge())
-print("distance:", p.get_distance_type())
-print("error:", E)
 
 # Zh = S.get_Zh()
 # Sh = S.get_Sh()
@@ -48,12 +41,35 @@ ZZ = S.predict(XX)
 # test normal dict
 
 model = {
-    "TYPE" : PRS,
-    "degree" : 2,
-    "RIDGE" : 0.001,
-    "KERNEL" : KernelType.D1
+    "TYPE" : Models.KS,
+    "KERNEL" : "OPTIM",
+    "KERNEL_COEF" : "OPTIM",
+    "DISTANCE_TYPE" : "OPTIM",
+    "METRIC" : Metrics.RMSECV,
+    "BUDGET" : 500
 }
 
 S = Surrogate_Factory(TS,model)
-S.build()
+S.build(optimize=False)
 ZZ = S.predict(XX)
+E = S.get_metric(Metrics.RMSECV,0)
+
+p = S.get_param()
+print("================\nModel default\n================")
+print("kernel:", p.get_kernel_type())
+print("kernel_coeff:", p.get_kernel_coef())
+print("distance:", p.get_distance_type())
+print("ERROR:", E)
+
+
+S = Surrogate_Factory(TS,model)
+S.build(optimize=True)
+S.optimize_parameters()
+E = S.get_metric(Metrics.RMSECV,0)
+
+p = S.get_param()
+print("================\nModel optimized\n================")
+print("kernel:", p.get_kernel_type())
+print("kernel_coeff:", p.get_kernel_coef())
+print("distance:", p.get_distance_type())
+print("ERROR:", E)
