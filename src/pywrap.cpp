@@ -175,7 +175,12 @@ PYBIND11_MODULE(pysgtelib , m) {
         .def("get_covariance_coef", [](const SGTELIB::Surrogate_Parameters &self) {    
             return convertMatrixToNumpy(self.get_covariance_coef());   
         })  
-        .def("get_budget", &SGTELIB::Surrogate_Parameters::get_budget);
+        .def("get_budget", &SGTELIB::Surrogate_Parameters::get_budget)
+        .def("display_x", [](SGTELIB::Surrogate_Parameters &self) {     
+            std::ostringstream oss;   
+            self.display_x(oss);  
+            return oss.str(); 
+        }, "A wrapper for displaying optimal model parameters");
 
 
     // this is an abstract class, cannot bind constructors
@@ -222,12 +227,20 @@ PYBIND11_MODULE(pysgtelib , m) {
         "A wrapper for the Surrogate get_out_dim method that returns Surrogate_Parameters");
         
     // this is an abstract class, cannot bind constructors
-    py::class_<SGTELIB::Surrogate_Ensemble, SGTELIB::Surrogate>(m, "Surrogate_Ensemble")
-        .def("model_list_display", [](SGTELIB::Surrogate_Ensemble &self) {   
-            std::ostringstream oss; 
-            self.model_list_display(oss);
-            return oss.str();
-        }, "A wrapper for model_list_display"  );
+    py::class_<SGTELIB::Surrogate_Ensemble, SGTELIB::Surrogate>(m, "Surrogate_Ensemble")  
+        .def("model_list_display", [](SGTELIB::Surrogate_Ensemble &self) {     
+            std::ostringstream oss;   
+            self.model_list_display(oss);  
+            return oss.str();  
+        }, "A wrapper for model_list_display")  
+        .def("model_list_preset", &SGTELIB::Surrogate_Ensemble::model_list_preset, "A method to set a preset for the model list")  
+        .def("model_list_remove_all", &SGTELIB::Surrogate_Ensemble::model_list_remove_all, "A method to remove all models from the list")  
+        .def("model_list_add", (void (SGTELIB::Surrogate_Ensemble::*)(const std::string &)) &SGTELIB::Surrogate_Ensemble::model_list_add, 
+            "A method to add a model to the list with a string definition")  
+        .def("model_list_add", (void (SGTELIB::Surrogate_Ensemble::*)(const std::map<std::string,SGTELIB::ParameterTypes>)) &SGTELIB::Surrogate_Ensemble::model_list_add, 
+            "A method to add a model to the list with a map definition")
+        .def("model_list_add", (void (SGTELIB::Surrogate_Ensemble::*)(SGTELIB::Surrogate *)) &SGTELIB::Surrogate_Ensemble::model_list_add, 
+            "A method to add a model to the list with a Surrogate pointer");
 
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);  
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::Matrix&, SGTELIB::Matrix&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);

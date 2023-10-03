@@ -1,7 +1,7 @@
 import numpy as np  
 import os
-from build.pysgtelib import Matrix, TrainingSet, Surrogate_Factory
-from build.pysgtelib import Models, Metrics, Surrogate_Ensemble, KernelType
+from build.pysgtelib import Matrix, TrainingSet, Surrogate_Factory, Surrogate_Ensemble
+from build.pysgtelib import Models, Metrics, KernelType, DistanceType, WeightType
 
 data_dir = "data"
 
@@ -16,16 +16,6 @@ XX = np.loadtxt(os.path.join(data_dir,"XX.txt"), delimiter=",", dtype=str, ndmin
 # XXm = Matrix('XX', XX.shape[0], XX.shape[1], XX)
 
 TS = TrainingSet(X,Z)
-
-model = "TYPE ENSEMBLE"
-S:Surrogate_Ensemble = Surrogate_Factory(TS,model)
-S.model_list_display()
-S.build()
-ZZ = S.predict(XX)
-E = S.get_metric(Metrics.OECV,0)
-
-# Zh = S.get_Zh()
-# Sh = S.get_Sh()
 
 # test string dict
 model = {
@@ -73,3 +63,53 @@ print("kernel:", p.get_kernel_type())
 print("kernel_coeff:", p.get_kernel_coef())
 print("distance:", p.get_distance_type())
 print("ERROR:", E)
+
+# Test Ensemble models
+models = [
+    {
+        "TYPE" : Models.PRS,
+        "DEGREE" : 2,
+        "RIDGE" : 1e-3
+    },
+    {
+        "TYPE" : Models.KRIGING,
+        "RIDGE" : 1e-3,
+        "DISTANCE" : DistanceType.NORM2
+    },
+    {
+        "TYPE" : Models.LOWESS,
+        "KERNEL" : KernelType.D1,
+        "KERNEL_COEF" : 0.2,
+        "DISTANCE" : DistanceType.NORM2
+    },  
+]
+
+model = {
+    "TYPE" : Models.ENSEMBLE,
+    "WEIGHT" : "OPTIM",
+    "METRIC" : Metrics.OECV,
+    "PRESET" : "DEFAULT",
+    "BUDGET" : 500
+}
+S:Surrogate_Ensemble = Surrogate_Factory(TS,model)
+print(S.model_list_display())
+
+S.model_list_remove_all()
+for model in models:
+    S.model_list_add(model)
+
+print(S.model_list_display())
+
+S.build()
+ZZ = S.predict(XX)
+E = S.get_metric(Metrics.OECV,0)
+
+S.optimize_parameters()
+
+p = S.get_param()
+w = p.get_weight()
+
+print(p.display_x())
+
+# Test Ensemble models with pretrained models
+
