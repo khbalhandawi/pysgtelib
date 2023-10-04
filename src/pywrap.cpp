@@ -157,6 +157,7 @@ PYBIND11_MODULE(pysgtelib , m) {
     py::class_<SGTELIB::Surrogate_Parameters>(m, "Surrogate_Parameters")  
         .def(py::init<const model_t &>())  
         .def(py::init<const std::string &>())
+        .def(py::init<const std::map<std::string, SGTELIB::ParameterTypes> &>())  
         .def("get_nb_parameter_optimization", &SGTELIB::Surrogate_Parameters::get_nb_parameter_optimization, "A function that returns the number of parameters to optimize")
         .def("get_type", &SGTELIB::Surrogate_Parameters::get_type)  
         .def("get_degree", &SGTELIB::Surrogate_Parameters::get_degree)  
@@ -166,6 +167,10 @@ PYBIND11_MODULE(pysgtelib , m) {
         .def("get_weight", [](const SGTELIB::Surrogate_Parameters &self) {    
             return convertMatrixToNumpy(self.get_weight());   
         })  
+        .def("set_weight", [](SGTELIB::Surrogate_Parameters &self, py::array_t<double> input) {  
+            SGTELIB::Matrix matrix = convertNumpyToMatrix(input,"W");  
+            self.set_weight(matrix);  
+        }, "A function that sets the weight matrix")
         .def("get_weight_type", &SGTELIB::Surrogate_Parameters::get_weight_type)  
         .def("get_metric_type", &SGTELIB::Surrogate_Parameters::get_metric_type)  
         .def("get_metric_type_str", &SGTELIB::Surrogate_Parameters::get_metric_type_str)  
@@ -240,11 +245,16 @@ PYBIND11_MODULE(pysgtelib , m) {
         .def("model_list_add", (void (SGTELIB::Surrogate_Ensemble::*)(const std::map<std::string,SGTELIB::ParameterTypes>)) &SGTELIB::Surrogate_Ensemble::model_list_add, 
             "A method to add a model to the list with a map definition")
         .def("model_list_add", (void (SGTELIB::Surrogate_Ensemble::*)(SGTELIB::Surrogate *)) &SGTELIB::Surrogate_Ensemble::model_list_add, 
-            "A method to add a model to the list with a Surrogate pointer");
+            "A method to add a model to the list with a Surrogate pointer")
+        .def("set_weight_vector", [](SGTELIB::Surrogate_Ensemble &self, py::array_t<double> input) {  
+            SGTELIB::Matrix matrix = convertNumpyToMatrix(input,"W");  
+            self.set_weight_vector(matrix);  
+        }, "A function that sets the weight matrix from an external numpy array");
 
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);  
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::Matrix&, SGTELIB::Matrix&, const std::string&)) &Surrogate_Factory, py::return_value_policy::reference);
     m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, const std::map<std::string,SGTELIB::ParameterTypes>&)) &Surrogate_Factory, py::return_value_policy::reference);
+    m.def("Surrogate_Factory", (SGTELIB::Surrogate* (*)(SGTELIB::TrainingSet&, SGTELIB::Surrogate_Parameters&)) &Surrogate_Factory, py::return_value_policy::reference);
 
 
 }
