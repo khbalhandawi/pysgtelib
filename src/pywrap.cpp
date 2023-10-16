@@ -198,14 +198,13 @@ PYBIND11_MODULE(pysgtelib , m) {
             return convertMatrixToNumpy(ZZ);   
         }, "A wrapper for the Surrogate predict method that returns a NumPy array")
         .def("get_metric", [](SGTELIB::Surrogate &self, SGTELIB::metric_t mt) {  
-            SGTELIB::Matrix E = self.get_metric(mt);    
-            return convertMatrixToNumpy(E); 
-        }, "A wrapper for the Surrogate get_metric method that returns a NumPy array")
-        .def("get_metric", [](SGTELIB::Surrogate &self, SGTELIB::metric_t mt, const int j) {  
-            double e = self.get_metric(mt,j);    
-            return e;
-        }, "A wrapper for the Surrogate get_metric method that returns a NumPy array")
-        .def("get_metric", (double (SGTELIB::Surrogate::*)(SGTELIB::metric_t, int)) &SGTELIB::Surrogate::get_metric, py::arg("mt"), py::arg("j"), "A wrapper for the Surrogate get_metric method that returns a double")
+            SGTELIB::Matrix E = self.get_metric(mt);  
+            return convertMatrixToNumpy(E);  
+        }, py::arg("mt"), "A wrapper for the Surrogate get_metric method that returns a NumPy array")  
+        .def("get_metric", [](SGTELIB::Surrogate &self, SGTELIB::metric_t mt, int j) {  
+            double e = self.get_metric(mt, j);  
+            return e;  
+        }, py::arg("mt"), py::arg("j"), "A wrapper for the Surrogate get_metric method that returns a double")
         .def("get_Sh", [](SGTELIB::Surrogate &self) {  
             SGTELIB::Matrix Sh = self.get_matrix_Sh();    
             return convertMatrixToNumpy(Sh); 
