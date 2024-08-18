@@ -1,0 +1,6 @@
+include README.md
+include ./pysgtelib/*.so
+include ./pysgtelib/*.pyi
+include CMakeLists.txt
+include pyproject.toml
+include LICENSE.md

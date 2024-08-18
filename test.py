@@ -1,7 +1,7 @@
 import numpy as np  
 import os
-from build.pysgtelib import Matrix, TrainingSet, Surrogate_Factory, Surrogate_Ensemble
-from build.pysgtelib import Models, Metrics, KernelType, DistanceType, WeightType
+from pysgtelib import Matrix, TrainingSet, Surrogate_Factory, Surrogate_Ensemble
+from pysgtelib import Models, Metrics, KernelType, DistanceType, WeightType
 
 data_dir = "data"
 

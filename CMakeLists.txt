@@ -2,15 +2,13 @@
 #	CMAKE SETTINGS
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5...3.20)
 
 #-------------------------------------------------------------------------------
 #	SOURCE CODE AND USER SETTINGS
 #-------------------------------------------------------------------------------
 
-add_subdirectory(pybind11)
-
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)  
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(sgtelib)
 
@@ -21,7 +19,7 @@ set(SGTELIB_INCLUDE_DIRS sgtelib/include)
 #	PROJECT SETTINGS
 #-------------------------------------------------------------------------------
 
-set(PROJECT_NAME "sgtelib") 
+set(PROJECT_NAME "pysgtelib")
 cmake_policy(SET CMP0048 NEW)
 project(${PROJECT_NAME} VERSION 0.1.0)
 
@@ -50,16 +48,22 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
 endif(MSVC)
 
 #-------------------------------------------------------------------------------
-#	ADD MODULES
+#	ADD Python MODULES
 #-------------------------------------------------------------------------------
+include(FetchContent)
+message(STATUS "Fetching pybind11 from: https://github.com/pybind/pybind11.git")
+FetchContent_Declare(
+	pybind11
+	GIT_REPOSITORY https://github.com/pybind/pybind11.git
+	GIT_TAG        v2.13.4
+	DOWNLOAD_EXTRACT_TIMESTAMP true
+)
+FetchContent_MakeAvailable(pybind11)
 
-# Set the path to the Anaconda Python interpreter
-set(Python_ROOT_DIR $ENV{PYTHON_PATH})
-set(Python_FIND_STRATEGY LOCATION)
+# Ensure Python and NumPy are found
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
 
 # Now find the Python package
-find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
-
 message(Python_INCLUDE_DIRS="${Python_INCLUDE_DIRS}")
 message(Python_EXECUTABLE="${Python_EXECUTABLE}")
 message(Python_LIBRARY="${Python_LIBRARY}")
@@ -69,13 +73,31 @@ message(Python_LIBRARY="${Python_LIBRARY}")
 #-------------------------------------------------------------------------------
 
 pybind11_add_module(${TARGET_NAME} src/pywrap.cpp)
-target_include_directories(${TARGET_NAME} PRIVATE
-    ${Python_INCLUDE_DIRS}
-    ${PYBIND11_INCLUDE_DIRS}
-)
 target_compile_definitions(${TARGET_NAME} PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
-target_link_libraries(${TARGET_NAME} PRIVATE sgtelib Python::Python ${LIBRARIES})
+target_link_libraries(${TARGET_NAME} PRIVATE sgtelib Python3::Python Python3::Module)
 
+#-------------------------------------------------------------------------------
+#	INSTALLATION RULES
+#-------------------------------------------------------------------------------
+
+# Define output directories based on the build type
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
+
+# Installation rules
+set(INSTALL_DIRECTORY "${CMAKE_SOURCE_DIR}/pysgtelib")
+install(TARGETS ${TARGET_NAME} sgtelib
+        LIBRARY DESTINATION ${INSTALL_DIRECTORY}
+        RUNTIME DESTINATION ${INSTALL_DIRECTORY})
+
+# Set the RPATH for pysgtelib to ensure it can find libsgtelib.so in the same directory
+set_target_properties(pysgtelib PROPERTIES
+	INSTALL_RPATH "$ORIGIN"  # $ORIGIN refers to the directory where pysgtelib.so is located
+	BUILD_WITH_INSTALL_RPATH TRUE
+)
+
+# Package configuration
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)

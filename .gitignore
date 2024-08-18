@@ -33,7 +33,7 @@ _deps
 .vscode
 
 # build
-build/*.txt
+build
 
 # ninja stuff
 *.ninja*
@@ -48,3 +48,8 @@ build/*.txt
 .env
 .pyc
 __pycache__
+.pdm-python
+*.egg-info
+dist
+.eggs
+*.dist-info

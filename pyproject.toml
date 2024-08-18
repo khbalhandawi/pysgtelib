@@ -1,0 +1,28 @@
+[project]
+name = "pysgtelib"
+version = "0.1.0"
+description = "A python wrapper for SGTELIB, a surrogate modeling library"
+authors = [
+    {name = "khbalhandawi", email = "khalil.alhandawi@mail.mcgill.ca"},
+]
+dependencies = [
+    "numpy>=1.21.0"
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {file = "LICENSE.md"}
+
+[build-system]
+requires = ["setuptools>=61", "wheel", "cmake", "pybind11", "numpy>=1.21.0", "mypy"]
+build-backend = "setuptools.build_meta"
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "wheel>=0.43.0",
+    "setuptools>=70.3.0",
+    "pytest>=8.2.2",
+    "mypy>=1.11.1",
+]

@@ -21,6 +21,7 @@ To complete this tutorial, you'll need:
         for more information.
 * A [Python](https://www.python.org/) distribution to run the scripts and compile the `pybind11` library `.so` file which will be imported. Recommended distributions:
     * [Anaconda](https://www.anaconda.com/)
+* A [PDM](https://pdm-project.org/latest/) installation for python environment management
 
 If you don't already have CMake installed, see the
 [CMake installation guide](https://cmake.org/install).
@@ -36,13 +37,20 @@ git clone --recurse-submodules https://github.com/khbalhandawi/pysgtelib.git
 cd pysgtelib
 ```
 
+Now, in `root` create a virtual environment
+
+```bash
+pdm install
+```
+
 Next, build the module using
 
 ```bash
 mkdir build
 cd build
-cmake ..
-make
+cmake -S .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+cmake --install . --config Release
 ```
 
 This should create a `pysgtelib.cpython-39-x86_64-linux-gnu.so` file in your `build` directory. The file name will vary based on your python version and linux distribution.
@@ -51,14 +59,6 @@ This should create a `pysgtelib.cpython-39-x86_64-linux-gnu.so` file in your `bu
 
 ```bash
 stubgen -m pysgtelib -o .
-```
-
-Now, in `root` create a virtual environment
-
-```bash
-python -m venv .env
-source .env/bin/activate
-pip install -r requirements.txt
 ```
 
 You may run your python scripts now. For example [test.py](test.py)
