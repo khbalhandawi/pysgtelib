@@ -2,7 +2,7 @@
 #	CMAKE SETTINGS
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.5...3.20)
+cmake_minimum_required(VERSION 3.10...3.20)
 
 #-------------------------------------------------------------------------------
 #	SOURCE CODE AND USER SETTINGS
@@ -14,6 +14,9 @@ add_subdirectory(sgtelib)
 
 set(PYBIND11_INCLUDE_DIRS pybind11/include)
 set(SGTELIB_INCLUDE_DIRS sgtelib/include)
+
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 #-------------------------------------------------------------------------------
 #	PROJECT SETTINGS

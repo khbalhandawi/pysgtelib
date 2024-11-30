@@ -49,8 +49,8 @@ Next, build the module using
 mkdir build
 cd build
 cmake -S .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release
-cmake --install . --config Release
+cmake --build Release --config Release
+cmake --install Release --config Release
 ```
 
 This should create a `pysgtelib.cpython-39-x86_64-linux-gnu.so` file in your `build` directory. The file name will vary based on your python version and linux distribution.
